@@ -30,27 +30,23 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    subgraph FENERO_ENV["FENERO ENVIRONMENT (Secure, On-Premise)"]
-        DSOURCE[Data Sources<br/>(Documents)] --> EXTRACT[Extraction Pipeline<br/>+ Ontologies]
-        ONTOLOGY[(Ontology Registry<br/>MISMO / IRS / Employment)] --> EXTRACT
-        EXTRACT --> FACTS[Structured Facts<br/>with Ontology Refs]
-        RULES[Specs<br/>(CEL Formulas)] --> ENGINE[Fenero Underwriter Engine<br/>(Execute + Prove)]
+    subgraph FENERO_ENV["FENERO ENVIRONMENT"]
+        DSOURCE[Data Sources] --> EXTRACT[Extraction + Ontologies]
+        ONTOLOGY[(Ontology Registry)] --> EXTRACT
+        EXTRACT --> FACTS[Structured Facts]
+        RULES[Specs] --> ENGINE[Fenero Engine]
         FACTS --> ENGINE
-        ENGINE --> RESULT[ComputationResult<br/>+ Derivations + Evidence]
-        RESULT --> SDK[JOINT SDK<br/>provable-compute]
+        ENGINE --> RESULT[Computation Result]
+        RESULT --> SDK[Joint SDK]
         SDK --> PG[ProofGenerator]
     end
-    PG -->|hashes/signatures only| PROOF[ProofArtifact]
-    PROOF --> DS_API[Deep Symbolic Verification API<br/>(Helm-deployed)<br/>POST /verify]
-    DS_API --> ATTEST[Attestation<br/>+ DS Signature]
-    ATTEST --> VALIDATOR[Fenero Validator<br/>(Customer-Facing)]
-    %% Call out for no data egress
-    classDef dottedLine stroke-dasharray: 5 5
-    FENERO_ENV -.-> PROOF
-    class FENERO_ENV dottedLine
-    %% Note for data boundary
-    click FENERO_ENV "javascript:void(0)" "NO DATA LEAVES THIS BOUNDARY"
+    PG -->|hashes only| PROOF[ProofArtifact]
+    PROOF --> DS_API[Deep Symbolic API]
+    DS_API --> ATTEST[Attestation]
+    ATTEST --> VALIDATOR[Validator App]
 ```
+
+**Note:** Deep Symbolic API is Helm-deployed inside Fenero's K8s cluster. NO DATA leaves this boundary.
 
 ---
 
@@ -61,9 +57,9 @@ Fenero uses a multi-layer ontology system for consistent field extraction across
 ```mermaid
 flowchart TD
     subgraph ONTOLOGIES["ONTOLOGY REGISTRY"]
-        MISMO[MISMO 3.4<br/>Standard mortgage docs]
-        IRS[IRS Extended<br/>Tax schedules & returns]
-        EMP[Employment<br/>VOE & pay stubs]
+        MISMO[MISMO 3.4]
+        IRS[IRS Extended]
+        EMP[Employment]
     end
 
     subgraph DOCUMENTS["DOCUMENT TYPES"]
@@ -79,10 +75,10 @@ flowchart TD
     end
 
     subgraph FIELDS["FIELD RESOLUTION"]
-        MISMO --> CANONICAL[Canonical Element Names]
+        MISMO --> CANONICAL[Canonical Names]
         IRS --> CANONICAL
         EMP --> CANONICAL
-        CANONICAL --> ALIASES[Aliases<br/>line_13_depreciation → Line13_DepreciationAmount]
+        CANONICAL --> ALIASES[Aliases]
     end
 ```
 
@@ -174,12 +170,12 @@ sequenceDiagram
 ```mermaid
 flowchart LR
     subgraph FENEROCLUSTER["FENERO KUBERNETES CLUSTER"]
-        FAPP[Fenero Application<br/>+ provable-compute SDK] -- Post ProofArtifact --> DSVC[Deep Symbolic Verifier<br/>(Helm Chart)]
-        DSVC -- "Verification API\nZ3 Solver\nAttestation Signer" --> ATTS[Attestation Output]
+        FAPP[Fenero + SDK] --> DSVC[Deep Symbolic Verifier]
+        DSVC --> ATTS[Attestation]
     end
-    %% Annotate
-    click FENEROCLUSTER "javascript:void(0)" "*** NOTHING LEAVES THIS CLUSTER ***"
 ```
+
+**Nothing leaves this cluster.** Deep Symbolic Verifier includes: Verification API, Z3 Solver, Attestation Signer.
 
 ### Deep Symbolic Deliverable: Helm Chart
 
