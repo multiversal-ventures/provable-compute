@@ -41,11 +41,11 @@ flowchart TB
 
 ## Components
 
-| Component | Owner | Purpose | Details |
-|-----------|-------|---------|---------|
-| **Proof Generation SDK** | Joint | Generate formal proofs from computation results | [SDK Interface](design/02-sdk-interface.md) |
-| **Verification API** | Deep Symbolic | Verify proofs, issue signed attestations | [Verification API](design/03-verification-api.md) |
-| **Validator App** | Fenero | Customer-facing UI for attestation display | [Validator App](design/07-validator-app.md) |
+| Component                 | Owner           | IP                                   | Purpose                                      | Details                                       |
+|---------------------------|-----------------|--------------------------------------|----------------------------------------------|-----------------------------------------------|
+| **Proof Generation SDK**  | Joint           | Fenero (integration work, paid for)  | Generate formal proofs from computation results | [SDK Interface](design/02-sdk-interface.md)   |
+| **Verification API**      | Deep Symbolic   | Deep Symbolic                        | Verify proofs, issue signed attestations     | [Verification API](design/03-verification-api.md) |
+| **Validator App**         | Fenero          | Fenero (integration work, paid for)  | Customer-facing UI for attestation display   | [Validator App](design/07-validator-app.md)   |
 
 ---
 
