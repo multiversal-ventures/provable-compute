@@ -17,24 +17,36 @@ This repository contains the design documentation for the joint Fenero + Deep Sy
 ## Architecture
 
 ```mermaid
-flowchart TB
-    subgraph FENERO["FENERO SYSTEM"]
-        DATA[Data Sources] --> EXT[Extraction + Ontologies]
-        EXT --> FACTS[Structured Facts]
-        FACTS --> ENGINE[Fenero Engine]
-        ENGINE --> RESULT[Computation Result]
-        RESULT --> SDK[Joint SDK]
-        SDK --> ARTIFACT[Proof Artifact]
+flowchart TD
+    subgraph FENERO["🔒 FENERO ENVIRONMENT — NO DATA EGRESS"]
+        direction TB
+        
+        DATA[("📁 Data Sources")]
+        EXT["Extraction + Ontologies"]
+        FACTS[("Structured Facts")]
+        ENGINE["⚙️ Fenero Engine"]
+        RESULT[("Computation Result")]
+        SDK["🔧 Joint SDK"]
+        ARTIFACT[("📜 Proof Artifact")]
+        
+        DATA --> EXT --> FACTS --> ENGINE --> RESULT --> SDK --> ARTIFACT
+        
+        subgraph DS["DEEP SYMBOLIC — Helm Chart in Fenero K8s"]
+            VERIFY["🔍 Verification API"]
+            ATTEST[("✅ Attestation")]
+            VERIFY --> ATTEST
+        end
+        
+        ARTIFACT -.->|"hashes only<br/>(no PII, no raw data)"| VERIFY
     end
 
-    ARTIFACT -->|hashes only| DS
+    ATTEST ==>|"signed certificate"| VALIDATOR["📱 Validator App<br/>(Customer-Facing)"]
 
-    subgraph DS["DEEP SYMBOLIC (Helm in K8s)"]
-        VERIFY[Verification API]
-        VERIFY --> ATTEST[Attestation]
-    end
-
-    ATTEST --> VALIDATOR[Validator App]
+    style FENERO fill:#e8f5e9,stroke:#2e7d32,stroke-width:3px
+    style DS fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    style ARTIFACT fill:#fff3e0,stroke:#ef6c00
+    style ATTEST fill:#fff3e0,stroke:#ef6c00
+    style VALIDATOR fill:#fce4ec,stroke:#c2185b
 ```
 
 ---
